@@ -32,7 +32,7 @@ public class TicTacToe {
 
     public static void main(String[] args) {
         while (true) {
-            initField(3,3,3); // Инициализация
+            initField(5,5,4); // Инициализация
             printField();
             System.out.println(fieldSizeX/2);
             while (true) {
@@ -69,6 +69,7 @@ public class TicTacToe {
     private static void aiTurn() {
         int[] yX= {-1,-1};
         int[] YandCount={0,0};
+        int circle =0;
         do {
             YandCount = whoNext(DOT_HUMAN,fieldHuman);// ищем след точку игрока
             if(fieldHuman[1][0]!=-1&&YandCount[1]>countAi){ // исключаем удачных ходов, и проверяем больше ли у игрока удачных ходов
@@ -92,7 +93,14 @@ public class TicTacToe {
                     yX[1] = RANDOM.nextInt(fieldSizeX);
                 }
                 else{
-                        wearDot(DOT_AI,fieldAi);// ищем полны список ходов ИИ
+                    if(circle==0) {
+                        circle++;
+                        wearDot(DOT_AI, fieldAi);// ищем полны список ходов ИИ
+                    }else {
+                        circle=0;
+                        yX[0] = RANDOM.nextInt(fieldSizeY);
+                        yX[1] = RANDOM.nextInt(fieldSizeX);
+                    }
                 }
             }
         }while (!isCellEmpty(yX[1], yX[0]));
@@ -179,7 +187,7 @@ public class TicTacToe {
                 if (isCellEmpty(x+count,y)){
                     yX[1]=x+count;
                     yX[0]=y;
-                }else if(isCellEmpty(x-1,y)&&(count>2||c==DOT_AI)){
+                }else if(isCellEmpty(x-1,y)&&isAiOrHuman(count,c)){
                     yX[1]=x-1;
                     yX[0]=y;
                 }
@@ -188,7 +196,7 @@ public class TicTacToe {
                 if (isCellEmpty(x,y+count)&&y+count<fieldSizeY){
                     yX[1]=x;
                     yX[0]=y+count;
-                }else if(isCellEmpty(x,y-1)&&(count>2||c==DOT_AI)){
+                }else if(isCellEmpty(x,y-1)&&isAiOrHuman(count,c)){
                     yX[1]=x;
                     yX[0]=y-1;
                 }
@@ -197,7 +205,7 @@ public class TicTacToe {
                 if (isCellEmpty(x+count,y+count)){
                     yX[1]=x+count;
                     yX[0]=y+count;
-                }else if(isCellEmpty(x-1,y-1)&&(count>2||c==DOT_AI)){
+                }else if(isCellEmpty(x-1,y-1)&&isAiOrHuman(count,c)){
                     yX[1]=x-1;
                     yX[0]=y-1;;
                 }
@@ -206,7 +214,7 @@ public class TicTacToe {
                 if (isCellEmpty(x+count,y-count)){
                     yX[1]=x+count;
                     yX[0]=y-count;
-                }else if(isCellEmpty(x-1,y+1)&&(count>2||c==DOT_AI)){
+                }else if(isCellEmpty(x-1,y+1)&&isAiOrHuman(count,c)){
                     yX[1]=x-1;
                     yX[0]=y+1;
                 }
@@ -222,6 +230,16 @@ public class TicTacToe {
             userFielld[y+1][0] = -1;
             userFielld[y+1][1] = -1;
         }
+    }
+
+    private static boolean isAiOrHuman(int count, char dot){
+        if((count>2||dot==DOT_AI)){
+            return true;
+        }else if(numberToWin==3)
+        {
+            return true;
+        }
+        return false;
     }
 
     private static int countDot(int y,int x,char c){ //подсчет точек
